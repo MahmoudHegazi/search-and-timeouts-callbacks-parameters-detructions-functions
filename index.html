@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style> 
+.prevent-select {
+  -webkit-user-select: none; /* Safari */
+  -ms-user-select: none; /* IE 10 and IE 11 */
+  user-select: none; /* Standard syntax */
+}
+.your-active-class{
+  background: lightblue;
+}
+
+.sec {
+  border: 1px solid black;
+  padding: 10px;
+  background: lightgray;
+  min-height: 200px;
+}
+</style>
+</head>
+<body>
+
+<h1>Disable Text Selection</h1>
+
+<section class="sec">1</section>
+<section class="sec">2</section>
+<section class="sec">3</section>
+<section class="sec">4</section>
+<section class="sec">5</section>
+<p>This text can be selected.</p>
+<p class="prevent-select">This text cannot be selected.</p>
+<script>
+let theOldTimeouts = [];
+const sections = document.querySelectorAll('section');
+let nice = ['1', '2', '3', '4', '5', '6', '7'];
+const chunkSize = 3;
+const arrays = [];
+nice.reverse();
+//AI advanced html/js search algo
+for (let i = 0; i < nice.length; i += chunkSize) {
+    const chunk = nice.slice(i, i + chunkSize);
+    // do whatever
+    arrays.push(chunk.sort());
+    
+}
+//console.log(arrays);
+
+/*this function easly in better way reach algorism search without read it. which divide the options to parts and work in parts better also I updated it with math sort and reverse to start by number I nee for js, in this example this fit for getBoundingClientRect I need the first item that top is minuse so the lowest one in group is better start 5, 6, 7  better to start check with 5 and stop the loop what result can be said it may done task this in one loop instead of looping all elements or 2 more 6,7*/
+function divideArrays(alist, chunkSize=3, reverse=true, sort=true){
+  alist = Array.from(alist);
+  if (typeof(alist) !== typeof([]) || isNaN(parseInt(chunkSize)) || typeof(chunkSize) !== 'number'){
+    console.log('missing data', typeof(alist) !== typeof([]), isNaN(parseInt(chunkSize)), typeof(chunkSize) !== 'number');
+    return [];
+  }
+  const arrays = [];
+  if (reverse){
+    alist.reverse();
+  }
+  for (let i = 0; i < alist.length; i += chunkSize) {
+    const chunk = alist.slice(i, i + chunkSize);
+    // do whatever
+   if (sort){
+     arrays.push(chunk.reverse());  
+   } else {
+     arrays.push(chunk);
+   }
+  }
+  return arrays;
+}
+/*new performance update some how it detect bottom alone no window height here*/
+const questionParts = divideArrays(sections);
+console.log(questionParts);
+/*get the remaning sections at bottom*/
+window.addEventListener("scroll", ()=>{
+   let stopParent = false;
+   let targets = [];
+   for (let r=0; r<questionParts.length; r++){
+      if (stopParent){
+          break;
+      }
+      const currentPart = questionParts[r];
+      for (let c=0; c<currentPart.length; c++) {
+         const rect = currentPart[c].getBoundingClientRect();
+         if (rect.top >= 0 && rect.top < 100){
+           targets = currentPart.slice(c, currentPart.length);
+           stopParent = true;
+           break;
+         }
+      }
+   }
+   console.log(targets);
+   return true;
+});
+
+
+setTimeouter([(msg)=>{alert(msg);},(msg2)=>{alert(msg2);},()=>{alert('hi3');},()=>{alert('hi4');}],[['ai?'], ['true']], 1000).then( (resolvedResult)=>{
+  console.log(resolvedResult);
+});
+
+function setActiveClass(active_section, active_class='your-active-class'){
+  sections.forEach( (asec)=>{
+    if (asec.classList.contains(active_class)){
+      asec.classList.remove(active_class)
+    }
+  });
+  active_section.classList.add(active_class);
+}
+/*
+
+$(window)[0].scrollY + $(window).height() >= $("body").height()
+*/
+
+
+
+async function setTimeouter(allTimeouts=[], params=[],timeoutWait=250, smoothy=250){
+   let success = true;
+   smoothy = smoothy <= timeoutWait ? timeoutWait :  smoothy;
+   theOldTimeouts.forEach( (timeout)=>{
+      if (timeout){
+         clearTimeout(timeout);
+      }
+      
+   });
+   
+   return await new Promise( (resolve, reject)=>{
+     let success = true;
+     try {
+       
+       allTimeouts.forEach( (cb, i)=>{
+         
+         let currentParms = [];
+         if (params && params.length > i){
+             currentParms = params[i];
+         }
+         const newWait = setTimeout(()=>{
+           cb(...currentParms);
+         }, timeoutWait);
+         theOldTimeouts.push(newWait);
+       });
+       timeoutWait += smoothy;
+       success = true;
+     } catch (error) {
+       console.log('setTimeouter error:',error);
+       success = false;
+     } finally {
+       /*always resolved technique*/
+       resolve(success);
+       return success;
+     }
+   });
+
+    
+}
+
+
+</script>
+
+</body>
+</html>
